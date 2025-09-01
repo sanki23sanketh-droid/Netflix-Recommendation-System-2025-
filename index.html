@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix Recommendation System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>Netflix Recommendation System</h1>
+            <p class="lead">Find similar shows and movies based on what you like</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <form method="POST" class="search-form">
+            <input type="text" class="search-input" 
+                   name="title" placeholder="Enter a Netflix title..." 
+                   list="titleSuggestions" required>
+            <button type="submit" class="search-button">Get Recommendations</button>
+        </form>
+        <datalist id="titleSuggestions">
+            {% for title in sample_titles %}
+                <option value="{{ title }}">
+            {% endfor %}
+        </datalist>
+        <div class="title-suggestions">Try: {{ sample_titles|join(', ') }}</div>
+
+        {% if error %}
+            <div class="error-message">{{ error }}</div>
+        {% endif %}
+
+        {% if query_title %}
+            <div class="plot-container">
+                <h2>Because you watched: <strong>{{ query_title }}</strong></h2>
+                <img src="data:image/png;base64,{{ plot_data }}" class="img-fluid" alt="Similarity Scores">
+            </div>
+
+            <h2>Recommended Titles:</h2>
+            {% for rec in recommendations %}
+                <div class="recommendation-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h3>{{ rec.title }}</h3>
+                        <span class="similarity-badge">Similarity: {{ rec.similarity }}</span>
+                    </div>
+                    <p style="color: #666; margin-bottom: 10px;">
+                        <small>{{ rec.type }} • {{ rec.genre }}</small>
+                    </p>
+                    <p>{{ rec.description }}</p>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
